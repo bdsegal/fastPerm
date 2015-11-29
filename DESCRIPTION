@@ -1,8 +1,8 @@
 Package: fastPerm
-Title: What the Package Does (one line, title case)
+Title: Fast approximation of small p-values in permutation tests by partitioning the permutation space
 Version: 0.0.0.9000
-Authors@R: person("First", "Last", email = "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
+Authors@R: person("Brian", "Segal", email = "bdsegal@umich.edu", role = c("aut", "cre"))
+Description: This package quickly approximates small p-values from permutation tests by partitioning the permutation space. This package also implements the stochastic approximation Monte Carlo (SAMC) algorithm developed by Liang et al. (2007) and tailored to p-value estimation by Yu et al. (2011).
 Depends:
     R (>= 3.1.3)
 License: What license is it under?
