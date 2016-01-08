@@ -323,17 +323,3 @@ print.fastPerm <- function(fp){
 	
 	writeLines(result)
 }
-
-# x <- rnorm(100,1)
-# y <- rnorm(100,0)
-
-# mStopDiffMean(x, y)
-# t.test(x,y)
-# fastPerm(x,y, testStat=diffMean)
-
-
-# x <- rexp(100,2)
-# y <- rexp(100,4)
-
-# mStopRatioMean(x, y)
-# fastPerm(x,y, testStat=ratioMean)
