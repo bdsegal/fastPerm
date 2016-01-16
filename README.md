@@ -2,8 +2,6 @@
 
 This is an R package for quickly approximating small permutation p-values (e.g. p < 10^-6) for two-sample functions of the mean. It does this by partitioning the permutation space in such a way that there is a trend in the p-values across the partitions. It then calculates p-values in partitions that are cheap to evaluate, predicts p-values in partitions that are expensive to evaluate, and takes a weighted sum to get an overall p-value. A paper describing this method in more detail is currently under review.
 
-This package also implements stochastic approximation Monte Carlo (Yu, 2011) as the SAMC function.
-
 fastPerm currently supports ratios and differences of the means. Functions of the median are experimental in this version of fastPerm, and may not be reliable.
 
 ## Installation
@@ -29,7 +27,3 @@ y <- rnorm(110, 1, 1)
 mStopDiffMean(x, y)
 fastPerm(x, y, testStat = diffMean)
 ```
-
-## References
-
-Kai Yu, Faming Liang, Julia Ciampa, and Nilanjan Chatterjee. Efficient p-value evaluation for resampling-based tests. Biostatistics, pages 1-11, 2011.
