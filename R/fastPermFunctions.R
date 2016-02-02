@@ -2,6 +2,7 @@
 # proposed algorithm (Section 3)
 
 # pmf of partitions ---------------------------------------
+
 Pi=function(nx,ny){
   #' Exact pmf of partitions
   #'
@@ -143,19 +144,19 @@ attributes(ratioMedian) <- list(summary="median", comparison="ratio")
 
 # proposed algorithm --------------------------------------
 
-fastPerm <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){#, printMstop=FALSE, plotMstop=TRUE){
+fastPerm <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){
 #' Fast approximation of small permutation p-values
 #'
 #' This function approximates the p-value (two-sided) for a two
 #' sample permutation test by partitioning the permutation space.
-#' This function is most useful for small p-values, e.g. p < 10^-5.
+#' This function is most useful for small p-values, e.g. p < 10^-6.
 #' @param x First sample
 #' @param y Second sample
 #' @param testStat Test statistic, defaults to the ratio of the
-#' means (ratioMean). Other choices are DiffMean, ratioMedian, and
-#' diffMedian. In the current version, the median statistics may
+#' means (ratioMean). Other choices are diffMean, ratioMedian, and
+#' diffMedian. In the current version, the median statistics are experimental and may
 #' not be reliable.
-#' @param B Number of Monte Carlo iterations within each partition. Defaults to 1000.
+#' @param B Number of Monte Carlo iterations within each partition. Defaults to 1,000.
 #' @keywords fast permtution test two sample
 #' @export
 #' @examples
@@ -249,11 +250,12 @@ fastPerm <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){#, prin
   # new data for predictions in partitions m = mPred
   mNewData <- data.frame(mReg = mPred)
   
-  # if nx < ny, set p-value in 0 sub-orbit to 1 and 
-  # estimate p-value in sub-orbit nx
+  # if nx < ny, set p-value in 0 partition to 1 and 
+  # estimate p-value in partition nx
   if (nx < ny) { 
       
-    # note: predictions with type="response" are not reliable for small values. There is not a problem for type="link"
+    # note: predictions with type="response" are not reliable for small values. 
+    # There is not a problem for type="link"
     pPoisCount <- c(B + 1*adjusted,
       exp(predict(poisFit, newdata=mNewData, type="link")))
 
@@ -275,15 +277,15 @@ fastPerm <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){#, prin
   glmSummary <- summary(poisFit)
 
   ret <- list(pwTilde = pwTilde,
-        mStop = m,
-        deviance = glmSummary$deviance,
-        aic = glmSummary$aic,
-        df.residual = glmSummary$df.residual,
-        usingStirling = usingStirling,
-        B = B,
-        t0 = t0,
-        comparison = attributes(testStat)$comparison,
-        summary = attributes(testStat)$summary)
+    mStop = m,
+    deviance = glmSummary$deviance,
+    aic = glmSummary$aic,
+    df.residual = glmSummary$df.residual,
+    usingStirling = usingStirling,
+    B = B,
+    t0 = t0,
+    comparison = attributes(testStat)$comparison,
+    summary = attributes(testStat)$summary)
         
   class(ret) <- "fastPerm"
   
@@ -308,7 +310,8 @@ print.fastPerm <- function(fp){
     "\n\nobserved statistic = ", signif(fp$t0,3),
     "\np-value = ", signif(fp$pwTilde,3),
     "\n\nusing stirling approximation: ", ifelse(fp$usingStirling, "yes", "no"),
-    "\nmStop = ", fp$mStop, ", deviance = ", signif(fp$deviance,3), ", AIC = ", signif(fp$aic,3), sep = "")
+    "\nmStop = ", fp$mStop, ", deviance = ", signif(fp$deviance,3), ", AIC = ",
+    signif(fp$aic,3), sep = "")
   
   writeLines(result)
 }

@@ -27,7 +27,7 @@ swapFun <- function(x, y, L){
 gammaFun <- function(b, b0){
   #' Utility function for SAMC function
   #'
-  #' This function is used by SAMC to deteroriate the influence of updates
+  #' This function is used by SAMC to deteroriate the effect of updates.
   #' @param b Current iteration of the SAMC algorithim
   #' @param bo Iteration at which the updates begin to deteriorate.
   #' @keywords SAMC utility
@@ -41,14 +41,16 @@ gammaFun <- function(b, b0){
 SAMC <- function(x, y, testStat=ratioMean, B=10e4, m=300, b0=1000){
 #' Stochastic Approximation Monte Carlo (SAMC)
 #'
-#' This function implements the SAMC algorithm developed by Liang et al. (2007) and tailored to p-value estimation by Yu et al. (2011)
+#' This function implements the SAMC algorithm developed by Liang et al. (2007) and 
+#' tailored to p-value estimation by Yu et al. (2011)
 #' @param x First sample
 #' @param y Second sample
 #' @param testStat Test statistic, defaults to the ratio of the
-#' means (ratioMean). Other choices are DiffMean, ratioMedian, and
+#' means (ratioMean). Other choices are diffMean, ratioMedian, and
 #' diffMedian.
 #' @param B Total Number of Monte Carlo iterations. Defaults to 10e4.
-#' @param m Total number of regions in the SAMC algorithm. Note: SAMC regions are different than fastPerm partitions.
+#' @param m Total number of regions in the SAMC algorithm. Note: SAMC regions are 
+#' different than fastPerm partitions.
 #' @param b0 Iteration at which the updates begin to decay.
 #' @keywords SAMC two sample
 #' @export
@@ -153,7 +155,10 @@ print.SAMC <- function(sam){
   #' Print function for SAMC
   #'
   #' This function prints the reslts and convergence diagnostics for the SAMC algorithm.
-  #' If the SAMC converged, then it should have sampled nearly uniformly from all regions. The maximum discrepancy is the maximum difference between the number of times SAMC sampled from a region and the expected amount if the sampling were uniform. Yu et al. suggest that the maximum discrepancy should be less than 0.2.
+  #' If the SAMC converged, then it should have sampled nearly uniformly from all regions.
+  #' The maximum discrepancy is the maximum difference between the number of times SAMC
+  #' sampled from a region and the expected amount if the sampling were uniform.
+  #' Yu et al. suggest that the maximum discrepancy should be less than 0.2.
   #' @param sam Output from the SAMC function
   #' @keywords SAMC summary convergence diagnostics
   #' @export
@@ -176,7 +181,8 @@ print.SAMC <- function(sam){
     prettyNum(sam$B, big.mark=","), " total iterations",
     "\n\nobserved statistic = ", signif(sam$t0,3),
     "\np-value = ", signif(sam$pval,3),
-    "\n\nmax discrepancy = ", signif(max(abs(error)),2),"\nalgorithm has converged if max discrepancy < 0.2", sep = "")
+    "\n\nmax discrepancy = ", signif(max(abs(error)),2),
+    "\nalgorithm has converged if max discrepancy < 0.2", sep = "")
   
   writeLines(result)
 }
@@ -184,8 +190,12 @@ print.SAMC <- function(sam){
 plot.SAMC <- function(sam){
   #' plot function for SAMC
   #'
-  #' This function plots the convergence diagnostics for the SAMC algorithm and prints out the associated values
-  #' If the SAMC converged, then it should have sampled nearly uniformly from all regions. The maximum discrepancy is the maximum difference between the number of times SAMC sampled from a region and the expected amount if the sampling were uniform. Yu et al. suggest that the maximum discrepancy should be less than 0.2.
+  #' This function plots the convergence diagnostics for the SAMC algorithm and prints
+  #' out the associated values. If the SAMC converged, then it should have sampled
+  #' nearly uniformly from all regions. The maximum discrepancy is the maximum difference
+  #' between the number of times SAMC sampled from a region and the expected amount if the
+  #' sampling were uniform. Yu et al. suggest that the maximum discrepancy should be less 
+  #' than 0.2.
   #' @param sam Output from the SAMC function
   #' @keywords SAMC summary convergence diagnostics
   #' @export
