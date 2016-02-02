@@ -160,7 +160,7 @@ fastPerm <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){
 #' @keywords fast permtution test two sample
 #' @export
 #' @examples
-#' x <- rexp(100, 4)
+#' x <- rexp(100, 5)
 #' y <- rexp(100, 2)
 #' mStopRatioMean(x, y)
 #' fastPerm(x, y)
@@ -300,7 +300,7 @@ print.fastPerm <- function(fp){
   #' @keywords fastPerm print
   #' @export
   #' @examples
-  #' x <- rexp(100, 4)
+  #' x <- rexp(100, 5)
   #' y <- rexp(100, 2)
   #' print(fastPerm(x, y, testStat = ratioMean))
   

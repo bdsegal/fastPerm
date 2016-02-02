@@ -19,7 +19,7 @@ install_github("bdsegal/fastPerm")
 ```{r}
 library(fastPerm)
 
-x <- rexp(100, 4)
+x <- rexp(100, 5)
 y <- rexp(100, 2)
 mStopRatioMean(x, y)
 # defaults to 'testStat = diffRatio'

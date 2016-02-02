@@ -125,7 +125,7 @@ mStopRatioMean <- function(x, y, B=1000, plot = TRUE){
   #' @keywords fast permtution stopping partition
   #' @export
   #' @examples
-  #' x <- rexp(100, 4)
+  #' x <- rexp(100, 5)
   #' y <- rexp(100, 2)
   #' mStopRatioMean(x, y)
 
@@ -140,7 +140,7 @@ mStopRatioMean <- function(x, y, B=1000, plot = TRUE){
   ny <- length(y)
 
   u <- qnorm(1-1/B)
-  m <- 1:(nx-1)
+  m <- 1:(min(nx, ny)-1)
   xi <- xiFunRatioMean(m=m, nx, ny, x, y)
   
   mStop <- m[min(which(xi > u))]
@@ -198,7 +198,6 @@ mStopDiffMean <- function(x, y, B=1000, plot = TRUE){
     ytemp <- y
     y <- x
     x <- ytemp
-
   }
 
   xbar <- mean(x)
@@ -208,7 +207,7 @@ mStopDiffMean <- function(x, y, B=1000, plot = TRUE){
   ny <- length(y)
   
   u <- qnorm(1-1/B)
-  m <- 1:(nx-1)
+  m <- 1:(min(nx, ny)-1)
   
   xi <- xiFunDiffMean(m=m, nx, ny, x, y)
   
@@ -232,8 +231,8 @@ print.mStop <- function(mStopObj){
   #' @keywords mStop print
   #' @export
   #' @examples
-  #' x <- rnorm(100, 1)
-  #' y <- rnorm(100, 0)
+  #' x <- rnorm(110, 1)
+  #' y <- rnorm(95, 0)
   #' print(mStopDiffMean(x, y))
   
   result <- paste("Expected mStop = ", mStopObj, sep = "")

@@ -55,17 +55,16 @@ SAMC <- function(x, y, testStat=ratioMean, B=10e4, m=300, b0=1000){
 #' @keywords SAMC two sample
 #' @export
 #' @examples
-#' x <- rexp(100, 4)
+#' x <- rexp(100, 5)
 #' y <- rexp(100, 2)
 #' sam <- SAMC(x, y)
 #' sam
-#' print(sam)
 #'
 #' x <- rnorm(110, 0, 1)
 #' y <- rnorm(110, 1, 1)
 #' sam <- SAMC(x, y, testStat = diffMean)
 #' sam
-#' print(sam)
+#' plot(sam)
 
   if (attributes(testStat)$comparison == "ratio" & (min(x,y)<0)) {
     stop("Some sample values <=0. With ratio statistics, all values must be greater than 0.")
@@ -138,13 +137,13 @@ SAMC <- function(x, y, testStat=ratioMean, B=10e4, m=300, b0=1000){
   pval = exp(theta[m]) * piVec[m] / sum(exp(theta) * piVec)
   
   ret <- list(pval = pval,
-        numAccepts = numAccepts,
-        piObs = piObs,
-        theta = theta,
-        B = B,
-        t0 = t0,
-        comparison = attributes(testStat)$comparison,
-        summary = attributes(testStat)$summary)
+    numAccepts = numAccepts,
+    piObs = piObs,
+    theta = theta,
+    t0 = t0,
+    B = B,
+    comparison = attributes(testStat)$comparison,
+    summary = attributes(testStat)$summary)
 
   class(ret) <- "SAMC"
   
@@ -163,7 +162,7 @@ print.SAMC <- function(sam){
   #' @keywords SAMC summary convergence diagnostics
   #' @export
   #' @examples
-  #' #' x <- rexp(100, 4)
+  #' x <- rexp(100, 5)
   #' y <- rexp(100, 2)
   #' sam <- SAMC(x, y)
   #' print(sam)
@@ -200,7 +199,7 @@ plot.SAMC <- function(sam){
   #' @keywords SAMC summary convergence diagnostics
   #' @export
   #' @examples
-  #' #' x <- rexp(100, 4)
+  #' x <- rexp(100, 5)
   #' y <- rexp(100, 2)
   #' sam <- SAMC(x, y)
   #' plot(sam)
