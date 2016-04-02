@@ -114,7 +114,9 @@ xiFunRatioMean <- function(m, nx, ny, x, y){
   return(xi)
 }
 
-mStopRatioMean <- function(x, y, B=1000, plot = TRUE){
+
+
+mStopRatioMean <- function(x, y, B=1000, plot = FALSE){
   #' Estimate partition at which fastPerm will stop for ratio statistics
   #'
   #' This function estimates the partition at which fastPerm will
@@ -138,9 +140,12 @@ mStopRatioMean <- function(x, y, B=1000, plot = TRUE){
 
   nx <- length(x)
   ny <- length(y)
+  
+  pmf <- PiLgamma(nx, ny)
+  mMax <- min(which(pmf == max(pmf)))
 
   u <- qnorm(1-1/B)
-  m <- 1:(min(nx, ny)-1)
+  m <- 1:min(mMax,(min(nx, ny)-1))
   xi <- xiFunRatioMean(m=m, nx, ny, x, y)
   
   mStop <- m[min(which(xi > u))]
@@ -178,7 +183,7 @@ xiFunDiffMean <- function(m, nx, ny, x, y){
   return(xi)
 }
 
-mStopDiffMean <- function(x, y, B=1000, plot = TRUE){
+mStopDiffMean <- function(x, y, B=1000, plot = FALSE){
   #' Estimate partition at which fastPerm will stop for difference statistics
   #'
   #' This function estimates the partition at which fastPerm will
@@ -206,8 +211,11 @@ mStopDiffMean <- function(x, y, B=1000, plot = TRUE){
   nx <- length(x)
   ny <- length(y)
   
+  pmf <- PiLgamma(nx, ny)
+  mMax <- min(which(pmf == max(pmf)))
+
   u <- qnorm(1-1/B)
-  m <- 1:(min(nx, ny)-1)
+  m <- 1:min(mMax,(min(nx, ny)-1))
   
   xi <- xiFunDiffMean(m=m, nx, ny, x, y)
   

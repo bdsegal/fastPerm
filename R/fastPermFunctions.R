@@ -3,7 +3,7 @@
 
 # pmf of partitions ---------------------------------------
 
-Pi=function(nx,ny){
+Pi <- function(nx, ny){
   #' Exact pmf of partitions
   #'
   #' This function calculates the exact probability mass function
@@ -26,57 +26,83 @@ Pi=function(nx,ny){
   return(out)
 }
 
-stir <- function(n){
-  #' Utility function for PiStirling
+PiLgamma <- function(nx, ny){
+  #' Exact pmf of partitions with the log gamma function
   #'
-  #' This function is used by the stirling function
-  #' @param n Integer 
-  #' @keywords stirling utility
+  #' This function calculates the exact probability mass function
+  #' of the partitions using the lgamma function.
+  #' Typically, this function is called from fastPerm.
+  #' @param nx Size of first sample
+  #' @param ny Size of second sample
+  #' @keywords partition pmf
   #' @export
   #' @examples
-  #' stir(n)
-
-  ifelse(n > 0, n * log(n), 0)
-}
-
-stirling <- function(nx, ny, m){
-  #' Utility function for PiStirling
-  #'
-  #' This function is used by the PiStirling function to
-  #' calculate the mass in partition m
-  #' @param nx Size of first sample 
-  #' @param nx Size of second sample 
-  #' @param m Partition
-  #' @keywords stirling utility
-  #' @export
-  #' @examples
-  #' stirling(nx, ny, m)
-
-  exp(2*stir(nx) + 2*stir(ny) - stir(nx-m) -stir(ny-m) - stir(nx+ny) - 2*stir(m))
-}
-
-PiStirling <- function(nx, ny){
-#' Stirling approximation of the pmf of partitions
-#'
-#' This function calculates the Stirling approximation to the
-#  probability mass function of the partitions.
-#' Typically, this function is called from fastPerm.
-#' @param nx Size of first sample
-#' @param ny Size of second sample
-#' @keywords Stirling approximation partition pmf
-#' @export
-#' @examples
-#' PiStirling(nx, ny)
-
+  #' PiLgamma(nx, ny)
+  
   out <- rep(NA, min(nx, ny) + 1)
   names(out) <- 0:min(nx, ny)
   
   for (m in 0:min(nx, ny)){
-    out[m + 1] <- stirling(nx, ny, m)
+    out[m + 1] <- exp(2*(lgamma(nx + 1) + lgamma(ny + 1) - lgamma(m + 1)) - 
+      lgamma(nx + ny + 1) - lgamma(nx - m + 1) - lgamma(ny - m + 1))
   }
   
-  return(out / sum(out))
+  return(out)
 }
+
+# old functions using stirling's approximation to get pmf
+
+# stir <- function(n){
+  # #' Utility function for PiStirling
+  # #'
+  # #' This function is used by the stirling function
+  # #' @param n Integer 
+  # #' @keywords stirling utility
+  # #' @export
+  # #' @examples
+  # #' stir(n)
+
+  # ifelse(n > 0, n * log(n), 0)
+# }
+
+# stirling <- function(nx, ny, m){
+  # #' Utility function for PiStirling
+  # #'
+  # #' This function is used by the PiStirling function to
+  # #' calculate the mass in partition m
+  # #' @param nx Size of first sample 
+  # #' @param nx Size of second sample 
+  # #' @param m Partition
+  # #' @keywords stirling utility
+  # #' @export
+  # #' @examples
+  # #' stirling(nx, ny, m)
+
+  # exp(2*stir(nx) + 2*stir(ny) - stir(nx-m) - stir(ny-m) - stir(nx+ny) - 2*stir(m))
+# }
+
+# PiStirling <- function(nx, ny){
+# #' Stirling approximation of the pmf of partitions
+# #'
+# #' This function calculates the Stirling approximation to the
+# #  probability mass function of the partitions.
+# #' Typically, this function is called from fastPerm.
+# #' @param nx Size of first sample
+# #' @param ny Size of second sample
+# #' @keywords Stirling approximation partition pmf
+# #' @export
+# #' @examples
+# #' PiStirling(nx, ny)
+
+  # out <- rep(NA, min(nx, ny) + 1)
+  # names(out) <- 0:min(nx, ny)
+  
+  # for (m in 0:min(nx, ny)){
+    # out[m + 1] <- stirling(nx, ny, m)
+  # }
+  
+  # return(out / sum(out))
+# }
 
 # test statistics, used as input to fastPerm ---------------
 
@@ -189,15 +215,15 @@ fastPerm <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){
   }
   
   # try the exact formula first
-  usingStirling <- FALSE # flag for whether the Stirling approx used
+  # usingStirling <- FALSE # flag for whether the Stirling approx used
 
-  pmf <- Pi(nx, ny)
+  pmf <- PiLgamma(nx, ny)
   
   # if exact formula fails, use Stirling approximation
-  if (sum(is.nan(pmf)) > 0) {
-    pmf <- PiStirling(nx, ny)
-    usingStirling <- TRUE
-  }
+  # if (sum(is.nan(pmf)) > 0) {
+    # pmf <- PiStirling(nx, ny)
+    # usingStirling <- TRUE
+  # }
   
   mMax <- as.numeric(names(pmf)[which(pmf == max(pmf))])
   t0 <- testStat(x, y)
@@ -281,7 +307,7 @@ fastPerm <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){
     deviance = glmSummary$deviance,
     aic = glmSummary$aic,
     df.residual = glmSummary$df.residual,
-    usingStirling = usingStirling,
+    # usingStirling = usingStirling,
     B = B,
     t0 = t0,
     comparison = attributes(testStat)$comparison,
@@ -309,7 +335,7 @@ print.fastPerm <- function(fp){
     prettyNum(fp$B, big.mark = ","), " iterations within partitions",
     "\n\nobserved statistic = ", signif(fp$t0,3),
     "\np-value = ", signif(fp$pwTilde,3),
-    "\n\nusing stirling approximation: ", ifelse(fp$usingStirling, "yes", "no"),
+    # "\n\nusing stirling approximation: ", ifelse(fp$usingStirling, "yes", "no"),
     "\nmStop = ", fp$mStop, ", deviance = ", signif(fp$deviance,3), ", AIC = ",
     signif(fp$aic,3), sep = "")
   

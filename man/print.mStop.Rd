@@ -13,8 +13,8 @@
 This function prints the expected stopping partition
 }
 \examples{
-x <- rnorm(100, 1)
-y <- rnorm(100, 0)
+x <- rnorm(110, 1)
+y <- rnorm(95, 0)
 print(mStopDiffMean(x, y))
 }
 \keyword{mStop}

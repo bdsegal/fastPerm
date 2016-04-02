@@ -4,21 +4,21 @@
 \alias{mStopRatioMean}
 \title{Estimate partition at which fastPerm will stop for ratio statistics}
 \usage{
-mStopRatioMean(x, y, B = 1000, plot = TRUE)
+mStopRatioMean(x, y, B = 1000, plot = FALSE)
 }
 \arguments{
 \item{x}{First sample}
 
 \item{y}{Second sample}
 
-\item{B}{Number of Monte Carlo iterations within each partition. Defaults to 1000.}
+\item{B}{Number of Monte Carlo iterations within each partition. Defaults to 1,000.}
 }
 \description{
 This function estimates the partition at which fastPerm will
 will stop, based on asymptotic approximation.
 }
 \examples{
-x <- rexp(100, 4)
+x <- rexp(100, 5)
 y <- rexp(100, 2)
 mStopRatioMean(x, y)
 }

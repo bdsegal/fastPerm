@@ -12,30 +12,31 @@ SAMC(x, y, testStat = ratioMean, B = 1e+05, m = 300, b0 = 1000)
 \item{y}{Second sample}
 
 \item{testStat}{Test statistic, defaults to the ratio of the
-means (ratioMean). Other choices are DiffMean, ratioMedian, and
+means (ratioMean). Other choices are diffMean, ratioMedian, and
 diffMedian.}
 
 \item{B}{Total Number of Monte Carlo iterations. Defaults to 10e4.}
 
-\item{m}{Total number of regions in the SAMC algorithm. Note: SAMC regions are different than fastPerm partitions.}
+\item{m}{Total number of regions in the SAMC algorithm. Note: SAMC regions are 
+different than fastPerm partitions.}
 
 \item{b0}{Iteration at which the updates begin to decay.}
 }
 \description{
-This function implements the SAMC algorithm developed by Liang et al. (2007) and tailored to p-value estimation by Yu et al. (2011)
+This function implements the SAMC algorithm developed by Liang et al. (2007) and 
+tailored to p-value estimation by Yu et al. (2011)
 }
 \examples{
-x <- rexp(100, 4)
+x <- rexp(100, 5)
 y <- rexp(100, 2)
 sam <- SAMC(x, y)
 sam
-print(sam)
 
 x <- rnorm(110, 0, 1)
 y <- rnorm(110, 1, 1)
 sam <- SAMC(x, y, testStat = diffMean)
 sam
-print(sam)
+plot(sam)
 }
 \keyword{SAMC}
 \keyword{sample}

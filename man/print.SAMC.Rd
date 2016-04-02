@@ -11,10 +11,13 @@
 }
 \description{
 This function prints the reslts and convergence diagnostics for the SAMC algorithm.
-If the SAMC converged, then it should have sampled nearly uniformly from all regions. The maximum discrepancy is the maximum difference between the number of times SAMC sampled from a region and the expected amount if the sampling were uniform. Yu et al. suggest that the maximum discrepancy should be less than 0.2.
+If the SAMC converged, then it should have sampled nearly uniformly from all regions.
+The maximum discrepancy is the maximum difference between the number of times SAMC
+sampled from a region and the expected amount if the sampling were uniform.
+Yu et al. suggest that the maximum discrepancy should be less than 0.2.
 }
 \examples{
-#' x <- rexp(100, 4)
+x <- rexp(100, 5)
 y <- rexp(100, 2)
 sam <- SAMC(x, y)
 print(sam)

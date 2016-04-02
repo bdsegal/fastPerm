@@ -12,19 +12,19 @@ fastPerm(x, y, testStat = ratioMean, B = 1000, adjusted = FALSE)
 \item{y}{Second sample}
 
 \item{testStat}{Test statistic, defaults to the ratio of the
-means (ratioMean). Other choices are DiffMean, ratioMedian, and
-diffMedian. In the current version, the median statistics may
+means (ratioMean). Other choices are diffMean, ratioMedian, and
+diffMedian. In the current version, the median statistics are experimental and may
 not be reliable.}
 
-\item{B}{Number of Monte Carlo iterations within each partition. Defaults to 1000.}
+\item{B}{Number of Monte Carlo iterations within each partition. Defaults to 1,000.}
 }
 \description{
 This function approximates the p-value (two-sided) for a two
 sample permutation test by partitioning the permutation space.
-This function is most useful for small p-values, e.g. p < 10^-5.
+This function is most useful for small p-values, e.g. p < 10^-6.
 }
 \examples{
-x <- rexp(100, 4)
+x <- rexp(100, 5)
 y <- rexp(100, 2)
 mStopRatioMean(x, y)
 fastPerm(x, y)

@@ -12,7 +12,7 @@ gammaFun(b, b0)
 \item{bo}{Iteration at which the updates begin to deteriorate.}
 }
 \description{
-This function is used by SAMC to deteroriate the influence of updates
+This function is used by SAMC to deteroriate the effect of updates.
 }
 \examples{
 gammaFun(b, b0)
