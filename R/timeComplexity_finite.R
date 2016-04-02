@@ -114,8 +114,6 @@ xiFunRatioMean <- function(m, nx, ny, x, y){
   return(xi)
 }
 
-
-
 mStopRatioMean <- function(x, y, B=1000, plot = FALSE){
   #' Estimate partition at which fastPerm will stop for ratio statistics
   #'

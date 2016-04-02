@@ -2,7 +2,7 @@
 
 This is an R package for quickly approximating small p-values (e.g. p < 10<sup>-6</sup>) in two-sample permutation tests. It does this by partitioning the permutation space in such a way that there is a trend in the p-values across the partitions. It then calculates p-values in partitions that are cheap to evaluate, predicts p-values in partitions that are expensive to evaluate, and takes a weighted sum to get an overall p-value. A paper describing this method in detail is currently under review.
 
-fastPerm currently supports ratios and differences of the means. Functions of the median are experimental in this version of fastPerm, and may not be reliable.
+fastPerm currently supports ratios and differences of the means (`testStat = ratioMean` and `testStat = diffMean`, respectively). Functions of the median are also available, but are experimental in this version of fastPerm, and may not be reliable.
 
 This package also implements stochastic approximation Monte Carlo (Yu et al., 2011) in the `SAMC` function.
 
@@ -19,22 +19,20 @@ install_github("bdsegal/fastPerm")
 ```{r}
 library(fastPerm)
 
+# Ratio of means
 x <- rexp(100, 5)
 y <- rexp(100, 2)
-
 # Expected stopping partition, based on asymptotic approximation
 mStopRatioMean(x, y)
-
-# Run fast permutation test, defaults to 'testStat = diffRatio'
+# Fast permutation test, defaults to 'testStat = ratioMean'
 fastPerm(x, y)
 
+# Difference of means
 x <- rnorm(110, 0, 1)
 y <- rnorm(95, 1, 1)
-
 # Expected stopping partition, based on asymptotic approximation
 mStopDiffMean(x, y)
-
-# Run fast permutation test
+# Fast permutation test
 fastPerm(x, y, testStat = diffMean)
 ```
 

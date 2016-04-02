@@ -1,5 +1,5 @@
-# pmf of partitions (Sections 2.2 and 2.3) and
-# proposed algorithm (Section 3)
+# pmf of partitions, and
+# proposed algorithm
 
 # pmf of partitions ---------------------------------------
 
@@ -49,60 +49,6 @@ PiLgamma <- function(nx, ny){
   
   return(out)
 }
-
-# old functions using stirling's approximation to get pmf
-
-# stir <- function(n){
-  # #' Utility function for PiStirling
-  # #'
-  # #' This function is used by the stirling function
-  # #' @param n Integer 
-  # #' @keywords stirling utility
-  # #' @export
-  # #' @examples
-  # #' stir(n)
-
-  # ifelse(n > 0, n * log(n), 0)
-# }
-
-# stirling <- function(nx, ny, m){
-  # #' Utility function for PiStirling
-  # #'
-  # #' This function is used by the PiStirling function to
-  # #' calculate the mass in partition m
-  # #' @param nx Size of first sample 
-  # #' @param nx Size of second sample 
-  # #' @param m Partition
-  # #' @keywords stirling utility
-  # #' @export
-  # #' @examples
-  # #' stirling(nx, ny, m)
-
-  # exp(2*stir(nx) + 2*stir(ny) - stir(nx-m) - stir(ny-m) - stir(nx+ny) - 2*stir(m))
-# }
-
-# PiStirling <- function(nx, ny){
-# #' Stirling approximation of the pmf of partitions
-# #'
-# #' This function calculates the Stirling approximation to the
-# #  probability mass function of the partitions.
-# #' Typically, this function is called from fastPerm.
-# #' @param nx Size of first sample
-# #' @param ny Size of second sample
-# #' @keywords Stirling approximation partition pmf
-# #' @export
-# #' @examples
-# #' PiStirling(nx, ny)
-
-  # out <- rep(NA, min(nx, ny) + 1)
-  # names(out) <- 0:min(nx, ny)
-  
-  # for (m in 0:min(nx, ny)){
-    # out[m + 1] <- stirling(nx, ny, m)
-  # }
-  
-  # return(out / sum(out))
-# }
 
 # test statistics, used as input to fastPerm ---------------
 
@@ -169,7 +115,6 @@ ratioMedian <- function(x, y){
 attributes(ratioMedian) <- list(summary="median", comparison="ratio")
 
 # proposed algorithm --------------------------------------
-
 fastPerm <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){
 #' Fast approximation of small permutation p-values
 #'
@@ -214,16 +159,7 @@ fastPerm <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){
     ny <- nxtemp
   }
   
-  # try the exact formula first
-  # usingStirling <- FALSE # flag for whether the Stirling approx used
-
   pmf <- PiLgamma(nx, ny)
-  
-  # if exact formula fails, use Stirling approximation
-  # if (sum(is.nan(pmf)) > 0) {
-    # pmf <- PiStirling(nx, ny)
-    # usingStirling <- TRUE
-  # }
   
   mMax <- as.numeric(names(pmf)[which(pmf == max(pmf))])
   t0 <- testStat(x, y)
@@ -256,7 +192,7 @@ fastPerm <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){
     }
   }
     
-  # setup neighborhoods for prediction, to be symmetric about mMax
+  # setup partitions for prediction, to be symmetric about mMax
   if (length(mMax)==1 & mMax[1]==nx){
     mPred <- 1:mMax
   } else if (length(mMax)==1 & mMax[1]<nx){
@@ -287,7 +223,7 @@ fastPerm <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){
 
     pwTilde <- pPoisCount %*% pmf / (B + 1*adjusted)
   
-  # if nx==ny, set both the 0 and nx sub-orbit to 1
+  # if nx==ny, set both the 0 and nx partition to 1
   } else { 
   
     mNewData <-data.frame(mReg = mNewData$mReg[-nx])
@@ -307,7 +243,6 @@ fastPerm <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){
     deviance = glmSummary$deviance,
     aic = glmSummary$aic,
     df.residual = glmSummary$df.residual,
-    # usingStirling = usingStirling,
     B = B,
     t0 = t0,
     comparison = attributes(testStat)$comparison,
@@ -335,7 +270,6 @@ print.fastPerm <- function(fp){
     prettyNum(fp$B, big.mark = ","), " iterations within partitions",
     "\n\nobserved statistic = ", signif(fp$t0,3),
     "\np-value = ", signif(fp$pwTilde,3),
-    # "\n\nusing stirling approximation: ", ifelse(fp$usingStirling, "yes", "no"),
     "\nmStop = ", fp$mStop, ", deviance = ", signif(fp$deviance,3), ", AIC = ",
     signif(fp$aic,3), sep = "")
   
