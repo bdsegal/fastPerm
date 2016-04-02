@@ -21,13 +21,20 @@ library(fastPerm)
 
 x <- rexp(100, 5)
 y <- rexp(100, 2)
+
+# Expected stopping partition, based on asymptotic approximation
 mStopRatioMean(x, y)
-# defaults to 'testStat = diffRatio'
+
+# Run fast permutation test, defaults to 'testStat = diffRatio'
 fastPerm(x, y)
 
 x <- rnorm(110, 0, 1)
 y <- rnorm(95, 1, 1)
+
+# Expected stopping partition, based on asymptotic approximation
 mStopDiffMean(x, y)
+
+# Run fast permutation test
 fastPerm(x, y, testStat = diffMean)
 ```
 
