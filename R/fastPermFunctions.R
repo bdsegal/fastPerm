@@ -235,8 +235,8 @@ fastPerm <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){
   }
   
   # data frame for regression
-  count <- c(B, countTemp[1:(mStop)]) + 1*adjusted
-  countForReg <- data.frame(count = count, mReg = 0:(mStop))
+  count <- c(B, countTemp[1:mStop]) + 1*adjusted
+  countForReg <- data.frame(count = count, mReg = 0:mStop)
   
   poisFit <- glm(count ~ mReg, family = poisson, data = countForReg)
   
