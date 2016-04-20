@@ -26,8 +26,9 @@ Pi <- function(nx, ny){
   return(out)
 }
 
-PiLgamma <- function(nx, ny){
+PiLgammaNxSmaller <- function(nx, ny){
   #' Exact pmf of partitions with the log gamma function
+  #' Assuming nx <= ny
   #'
   #' This function calculates the exact probability mass function
   #' of the partitions using the lgamma function.
@@ -50,6 +51,33 @@ PiLgamma <- function(nx, ny){
   return(out)
 }
 
+PiLgamma <- function(nx, ny){
+  #' Exact pmf of partitions with the log gamma function
+  #'
+  #' This function calculates the exact probability mass function
+  #' of the partitions using the lgamma function.
+  #' Typically, this function is called from fastPerm.
+  #' @param nx Size of first sample
+  #' @param ny Size of second sample
+  #' @keywords partition pmf
+  #' @export
+  #' @examples
+  #' PiLgamma(nx, ny)
+  
+  nMin <- min(nx, ny)
+  out <- rep(NA, nMin + 1)
+  names(out) <- 0:min(nx, ny)
+  
+  for (m in 0:nMin){
+    out[m + 1] <- exp(
+    	lgamma(nx + 1) + lgamma(ny + 1) + lgamma(nx + ny - nMin + 1) +
+    	lgamma(nMin + 1) - lgamma(nx - m + 1) - lgamma(ny - m + 1) -
+    	lgamma(nx + ny +1) - 2*lgamma(m+1)
+    	)
+  }
+  
+  return(out)
+}
 # test statistics, used as input to fastPerm ---------------
 
 diffMean <- function(x, y){
@@ -169,7 +197,8 @@ fastPerm <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){
   m <- 1
   sumGTzero <- TRUE
   
-  while (sumGTzero & (m <= mMax[1])) {
+  # while (sumGTzero & (m <= mMax[1])) {
+  while (sumGTzero & (m <= nx)) {
 
     tb <- rep(NA, B)
     
@@ -191,6 +220,8 @@ fastPerm <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){
       m <- m+1
     }
   }
+
+  mStop <- m-1
     
   # setup partitions for prediction, to be symmetric about mMax
   if (length(mMax)==1 & mMax[1]==nx){
@@ -204,8 +235,8 @@ fastPerm <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){
   }
   
   # data frame for regression
-  count <- c(B, countTemp[1:(m-1)]) + 1*adjusted
-  countForReg <- data.frame(count = count, mReg = 0:(m-1))
+  count <- c(B, countTemp[1:(mStop)]) + 1*adjusted
+  countForReg <- data.frame(count = count, mReg = 0:(mStop))
   
   poisFit <- glm(count ~ mReg, family = poisson, data = countForReg)
   
@@ -239,7 +270,7 @@ fastPerm <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){
   glmSummary <- summary(poisFit)
 
   ret <- list(pwTilde = pwTilde,
-    mStop = m,
+    mStop = mStop,
     deviance = glmSummary$deviance,
     aic = glmSummary$aic,
     df.residual = glmSummary$df.residual,
@@ -256,7 +287,7 @@ fastPerm <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){
 print.fastPerm <- function(fp){
   #' Print function for fastPerm
   #'
-  #' This function prints the reslts of fastPerm
+  #' This function prints the results of fastPerm
   #' @param fp Output from the fastPerm function
   #' @keywords fastPerm print
   #' @export

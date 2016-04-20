@@ -24,6 +24,6 @@ mStopDiffMean(x, y)
 }
 \keyword{fast}
 \keyword{partition}
-\keyword{permtution}
+\keyword{permutation}
 \keyword{stopping}
 

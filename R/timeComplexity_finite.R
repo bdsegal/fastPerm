@@ -4,14 +4,25 @@ muw <- function(m, lambda, N, xbar, ybar) {
   #' Utitlity function for mStop
   #'
   #' Calculates expected value of W in partition m
+  #' @export
   
-  m / sqrt(lambda * (1 - lambda) * N) * (xbar-ybar)
+  m / sqrt(lambda * (1 - lambda) * N) * (ybar-xbar)
+}
+
+muwp <- function(lambda, N, xbar, ybar) {
+  #' Utitlity function for mStop
+  #'
+  #' Calculates derivative of W in partition m
+  #' @export
+  
+  1 / sqrt(lambda * (1 - lambda) * N) * (ybar-xbar)
 }
 
 g <- function(m, nx, ny, xbar, ybar){
   #' Utitlity function for mStop
   #'
   #' Calculates g function of the expected value of W
+  #' @export
   
   N <- nx + ny
   lambda <- nx / N
@@ -29,6 +40,7 @@ gp <- function(m, nx, ny, xbar, ybar){
   #' Utitlity function for mStop
   #'
   #' Calculates derivative of the g function of the expected value of W
+  #' @export
   
   N <- nx + ny
   lambda <- nx / N
@@ -41,22 +53,12 @@ gp <- function(m, nx, ny, xbar, ybar){
   
   return((1 - lambda) / lambda * numerator / denominator)
 }
-
-ER <- function(m, nx, ny, xbar, ybar){
-  #' Utitlity function for mStop
-  #'
-  #' Calculates expected value of the ratio stat in partition m
-  
-  num <- xbar + m / nx * (ybar - xbar)
-  den <- ybar + m / ny * (xbar - ybar)
-  
-  return(num / den)
-}
   
 VarW <- function(m, nx, ny, x, y){
   #' Utitlity function for mStop
   #'
   #' Calculates variance of W
+  #' @export
   
   N <- nx + ny
   lambda <- nx / N
@@ -84,12 +86,77 @@ VarW <- function(m, nx, ny, x, y){
   return(EAx + EAy - ECx - ECy)
 }
 
+mHatFun <- function(x,y){
+  #' Calculates the solution: mHat = m s.t. V'(m) = 0,
+  #' where V' is the derivative of Var(W|x,y) wrt m
+  #' @export
+ 
+  nx <- length(x)
+  ny <- length(y)
+  
+  yCrossProd <- outer(y,y)
+  yCrossProdSum <- sum(yCrossProd) - sum(diag(yCrossProd))
+  
+  xCrossProd <- outer(x,x)
+  xCrossProdSum <- sum(xCrossProd) - sum(diag(xCrossProd))
+  
+  xSqSum <- sum(diag(xCrossProd)) 
+  ySqSum <- sum(diag(yCrossProd)) 
+  
+  num <- xCrossProdSum/(nx*(nx-1)) + yCrossProdSum/(ny*(ny-1)) - 
+         xSqSum/nx - ySqSum/ny
+  
+  den <- 2*(xCrossProdSum/(nx^2*(nx-1)) + yCrossProdSum/(ny^2*(ny-1)) -
+         xSqSum/nx^2 - ySqSum/ny^2)
+  
+  return(num/den)
+
+}
+
+Vp <- function(x,y,m){
+  #' Computes V'=Var(W|x,y) wrt m
+  #' @export
+ 
+  nx <- length(x)
+  ny <- length(y)
+  N <- nx + ny
+  lambda <- nx / N
+  
+  constant <- lambda * (1 - lambda) * N
+  
+  yCrossProd <- outer(y,y)
+  yCrossProdSum <- sum(yCrossProd) - sum(diag(yCrossProd))
+  
+  xCrossProd <- outer(x,x)
+  xCrossProdSum <- sum(xCrossProd) - sum(diag(xCrossProd))
+  
+  xSqSum <- sum(diag(xCrossProd)) 
+  ySqSum <- sum(diag(yCrossProd)) 
+  
+  intercept <- -xCrossProdSum/(nx*(nx-1)) - yCrossProdSum/(ny*(ny-1)) + 
+         xSqSum/nx + ySqSum/ny
+  
+  slope <- 2*(xCrossProdSum/(nx^2*(nx-1)) + yCrossProdSum/(ny^2*(ny-1)) -
+         xSqSum/nx^2 - ySqSum/ny^2)
+  
+  intercept <- intercept/constant
+  slope <- slope/constant
+  
+  deriv <- intercept + m * slope
+  
+  return(list(intercept=intercept,
+         slope=slope,
+         deriv=deriv))
+}
+  
 VarR <- function(m, nx, ny, x, y, xbar, ybar){
   #' Utitlity function for mStop
   #'
   #' Calculates variance of the ratio stat R
+  #' @export
   
   gp(m, nx, ny, xbar, ybar)^2 * 
+  # muwp(lambda, N, xbar, ybar)^2 * 
   VarW(m, nx, ny, x, y)
 }
 
@@ -97,6 +164,7 @@ xiFunRatioMean <- function(m, nx, ny, x, y){
   #' Utitlity function for mStop
   #'
   #' Calculates xi(m)
+  #' @export
   
   N <- nx + ny
   lambda <- nx / N
@@ -129,8 +197,8 @@ mStopRatioMean <- function(x, y, B=1000, plot = FALSE){
   #' y <- rexp(100, 2)
   #' mStopRatioMean(x, y)
 
-  # swap x and y if ybar < xbar
-  if (mean(y) < mean(x)) {
+  # swap x and y if xbar < ybar
+  if (mean(x) < mean(y)) {
     ytemp <- y
     y <- x
     x <- ytemp
@@ -162,6 +230,7 @@ xiFunDiffMean <- function(m, nx, ny, x, y){
   #' Utitlity function for mStop
   #'
   #' Calculates xi(m)
+  #' @export
   
   N <- nx + ny
   lambda <- nx / N
@@ -189,15 +258,15 @@ mStopDiffMean <- function(x, y, B=1000, plot = FALSE){
   #' @param x First sample
   #' @param y Second sample
   #' @param B Number of Monte Carlo iterations within each partition. Defaults to 1,000.
-  #' @keywords fast permtution stopping partition
+  #' @keywords fast permutation stopping partition
   #' @export
   #' @examples
   #' x <- rnorm(100, 1)
   #' y <- rexp(100, 0)
   #' mStopDiffMean(x, y)
 
-  # swap x and y if ybar < xbar
-  if (mean(y) < mean(x)) {
+  # swap x and y if xbar < ybar
+  if (mean(x) < mean(y)) {
     ytemp <- y
     y <- x
     x <- ytemp
@@ -244,3 +313,5 @@ print.mStop <- function(mStopObj){
   result <- paste("Expected mStop = ", mStopObj, sep = "")
   writeLines(result)
 }
+
+
