@@ -194,11 +194,11 @@ fastPerm <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){
   
   countTemp <-  rep(0, nx)
   names(countTemp) <- 1:nx
+  
   m <- 1
   sumGTzero <- TRUE
   
-  # while (sumGTzero & (m <= mMax[1])) {
-  while (sumGTzero & (m <= nx)) {
+  while (sumGTzero & (m <= mMax[1])) {
 
     tb <- rep(NA, B)
     
@@ -214,10 +214,10 @@ fastPerm <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){
     
     countTemp[m] <- sum(tb >= t0)
     
+    m <- m + 1
+
     if (countTemp[m] == 0){
       sumGTzero <- FALSE
-    } else{
-      m <- m+1
     }
   }
 

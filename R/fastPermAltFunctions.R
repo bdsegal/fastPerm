@@ -94,10 +94,10 @@ fastPermAlt <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){
     
     countTemp[m] <- sum(tb >= t0)
     
+    m <- m+1
+
     if (countTemp[m] == 0){
       sumGTzero <- FALSE
-    } else{
-      m <- m+1
     }
   }
 
