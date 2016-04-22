@@ -136,12 +136,23 @@ SAMC <- function(x, y, testStat=ratioMean, B=10e4, m=300, b0=1000){
   # estimate p-value
   pval = exp(theta[m]) * piVec[m] / sum(exp(theta) * piVec)
   
+  # max error
+  m0 <- sum(piObs==0)
+  p <- piObs/sum(piObs)
+  m <- length(p)
+
+  error <- (p-1/(length(p)-m0))/(1/(length(p)-m0))
+  error <- error*(piObs>0)
+  maxDiscrep <- max(abs(error))
+
+  # return values
   ret <- list(pval = pval,
     numAccepts = numAccepts,
     piObs = piObs,
     theta = theta,
     t0 = t0,
     B = B,
+    maxDiscrep = maxDiscrep,
     comparison = attributes(testStat)$comparison,
     summary = attributes(testStat)$summary)
 
@@ -166,21 +177,13 @@ print.SAMC <- function(sam){
   #' y <- rexp(100, 2)
   #' sam <- SAMC(x, y)
   #' print(sam)
-  
-  x <- sam$piObs
-  m0 <- sum(x==0)
-  p <- x/sum(x)
-  m <- length(p)
 
-  error <- (p-1/(m-m0))/(1/(m-m0))
-  error <- error*(x>0)
-  
   result <- paste("    SAMC Two Sample Test    \n\n",
     sam$comparison, " of ", sam$summary, "s\n",
     prettyNum(sam$B, big.mark=","), " total iterations",
     "\n\nobserved statistic = ", signif(sam$t0,3),
     "\np-value = ", signif(sam$pval,3),
-    "\n\nmax discrepancy = ", signif(max(abs(error)),2),
+    "\n\nmax discrepancy = ", signif(sam$maxDiscrep, 2),
     "\nalgorithm has converged if max discrepancy < 0.2", sep = "")
   
   writeLines(result)
