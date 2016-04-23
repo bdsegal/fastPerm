@@ -251,7 +251,7 @@ fastPerm <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){
     pPoisCount <- c(B + 1*adjusted,
       exp(predict(poisFit, newdata=mNewData, type="link")))
 
-    pwTilde <- pPoisCount %*% pmf / (B + 1*adjusted)
+    pPred <- pPoisCount %*% pmf / (B + 1*adjusted)
   
   # if nx==ny, set both the 0 and nx partition to 1
   } else { 
@@ -262,13 +262,13 @@ fastPerm <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){
       exp(predict(poisFit, newdata = mNewData, type="link")),
       B + 1*adjusted)
     
-    pwTilde <- pPoisCount %*% pmf / (B + 1*adjusted)
+    pPred <- pPoisCount %*% pmf / (B + 1*adjusted)
 
   }
   
   glmSummary <- summary(poisFit)
 
-  ret <- list(pwTilde = pwTilde,
+  ret <- list(pPred = pPred,
     mStop = mStop,
     deviance = glmSummary$deviance,
     aic = glmSummary$aic,
@@ -299,7 +299,7 @@ print.fastPerm <- function(fp){
     fp$comparison, " of ", fp$summary, "s\n", 
     prettyNum(fp$B, big.mark = ","), " iterations within partitions",
     "\n\nobserved statistic = ", signif(fp$t0,3),
-    "\np-value = ", signif(fp$pwTilde,3),
+    "\np-value = ", signif(fp$pPred,3),
     "\nmStop = ", fp$mStop, ", deviance = ", signif(fp$deviance,3), ", AIC = ",
     signif(fp$aic,3), sep = "")
   
