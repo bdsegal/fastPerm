@@ -221,6 +221,7 @@ fastPerm <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){
   }
 
   mStop <- m-1
+  mLast <- max(which(countTemp>0))
     
   # setup partitions for prediction, to be symmetric about mMax
   if (length(mMax)==1 & mMax[1]==nx){
@@ -234,8 +235,8 @@ fastPerm <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){
   }
   
   # data frame for regression
-  count <- c(B, countTemp[1:(mStop-1)]) + 1*adjusted
-  countForReg <- data.frame(count = count, mReg = 0:(mStop-1))
+  count <- c(B, countTemp[1:mLast]) + 1*adjusted
+  countForReg <- data.frame(count = count, mReg = 0:mLast)
   
   poisFit <- glm(count ~ mReg, family = poisson, data = countForReg)
   

@@ -101,6 +101,7 @@ fastPermAlt <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){
   }
 
   mStop <- m-1
+  mLast <- max(which(countTemp>0))
     
   # setup partitions for prediction, to be symmetric about mMax
   if (length(mMax)==1 & mMax[1]==nx){
@@ -114,7 +115,7 @@ fastPermAlt <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){
   }
   
   # data frame for regression
-  pHat <- (countTemp[1:(mStop-1)] + 1*adjusted)/B
+  pHat <- (countTemp[1:mLast] + 1*adjusted)/B
   
   betaNorm <- optim(c(0.01,1,.5), optFunNorm, m=1:length(pHat), pHat=pHat)$par
   betaT <- optim(c(0.01,1,.5), optFunT, m=1:length(pHat), pHat=pHat, nx=nx, ny=ny)$par
