@@ -114,13 +114,13 @@ fastPermAlt <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){
   }
   
   # data frame for regression
-  pHat <- (countTemp[1:(mStop)] + 1*adjusted)/B
+  pHat <- (countTemp[1:(mStop-1)] + 1*adjusted)/B
   
-  betaNorm <- optim(c(0.01,1,.5), optFunNorm, m=m, pHat=pHat)$par
-  betaT <- optim(c(0.01,1,.5), optFunT, m=m, pHat=pHat, nx=nx, ny=ny)$par
+  betaNorm <- optim(c(0.01,1,.5), optFunNorm, m=1:length(pHat), pHat=pHat)$par
+  betaT <- optim(c(0.01,1,.5), optFunT, m=1:length(pHat), pHat=pHat, nx=nx, ny=ny)$par
   
-  betaNormLin <- optimize(optFunNormLin, interval=c(0,1), m=m, pHat=pHat)$minimum
-  betaTLin <- optimize(optFunTLin, interval=c(0,1), m=m, pHat=pHat, nx=nx, ny=ny)$minimum
+  betaNormLin <- optimize(optFunNormLin, interval=c(0,1), m=1:length(pHat), pHat=pHat)$minimum
+  betaTLin <- optimize(optFunTLin, interval=c(0,1), m=m, pHat=1:length(pHat), nx=nx, ny=ny)$minimum
   
   # betaNorm <- optim(c(.1, .1, .1), optFunNorm, m=m, pHat=pHat, method="CG", hessian=TRUE)
   # betaNorm <- optim(c(2,2,2), optFunNorm, m=m, pHat=pHat, method="L-BFGS-B", hessian=TRUE)
