@@ -40,4 +40,4 @@ fastPerm(x, y, testStat = diffMean)
 
 Kai Yu, Faming Liang, Julia Ciampa, and Nilanjan Chatterjee. Efficient p-value evaluation for resampling-based tests. Biostatistics, pages 1-11, 2011.
 
-Brian Segal, Hui Jiang, and Thomas Braun. Fast approximation of small p-values in permutation tests by partitioning the permutation space. Under review.
+Brian Segal, Hui Jiang, and Thomas Braun. Fast approximation of small p-values in permutation tests by partitioning the permutation space. Submitted.
