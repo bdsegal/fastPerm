@@ -1,6 +1,6 @@
 
 
-fastPermAsym <- function(x, y, testStat = ratioMean, plot = FALSE){
+fastPermAsym <- function(x, y, testStat = ratioMean){
 #' Fast approximation of small permutation p-values via asymptotic results
 #'
 #' This function approximates the p-value (two-sided) for a two
@@ -66,7 +66,7 @@ fastPermAsym <- function(x, y, testStat = ratioMean, plot = FALSE){
   }
   
   xi <- xiFun(m=m, nx, ny, x, y)
- 
+
   # if nx != ny, set p-value in 0 partition to 1 and 
   # estimate p-value in partition min(nx,ny)
   if (nx != ny) { 
@@ -79,12 +79,13 @@ fastPermAsym <- function(x, y, testStat = ratioMean, plot = FALSE){
     pT <- c(1, pt(xi[-length(xi)], df=nx+ny, lower.tail=FALSE), 1) %*% pmf
   }
 
-  
-#   if (plot) {
-#     plot(x = m, y = xi, pch=19, ylab = expression(paste(xi, "(m)")), 
-#     main= paste("Expected mStop = ", mStop, sep = ""))
-#     abline(a = u, b = 0, col="red")
-#   }
+  # if (plot) {
+    # par(mar = c(5, 5, 4, 2) + 0.1)
+    # plot(x = m, y = xi, pch=19, ylab = expression(paste(xi, "(m)")), 
+         # main= bquote(paste(m["stop"]^"asym", " = ", .(mStop), sep = "")),
+         # cex.axis = 1.4, cex.lab = 1.4, cex.main = 1.4)
+    # abline(a = u, b = 0, col="red")
+  # }
   fpAsym <- list(pNorm=as.numeric(pNorm),
                  pT=as.numeric(pT),
                  comparison = attributes(testStat)$comparison,
@@ -119,3 +120,9 @@ print.fastPermAsym <- function(fp){
   writeLines(result)
 }
 
+# testing ---------------------------------------------------------------------
+# x <- rexp(n = 100, rate = 2)
+# y <- rexp(n = 100, rate = 4)
+# mStopRatioMean(x, y, B=1000, plot = TRUE)
+# fastPermAsym(x, y, testStat = ratioMean)
+# fastPerm(x, y, testStat = ratioMean)

@@ -1,21 +1,12 @@
 # Functions derived in the Appendix -----------------------
 
-muw <- function(m, lambda, N, xbar, ybar) {
+muw <- function(m, xbar, ybar) {
   #' Utitlity function for mStop
   #'
   #' Calculates expected value of W in partition m
   #' @export
   
-  m / sqrt(lambda * (1 - lambda) * N) * (ybar-xbar)
-}
-
-muwp <- function(lambda, N, xbar, ybar) {
-  #' Utitlity function for mStop
-  #'
-  #' Calculates derivative of W in partition m
-  #' @export
-  
-  1 / sqrt(lambda * (1 - lambda) * N) * (ybar-xbar)
+  m * (ybar - xbar)
 }
 
 g <- function(m, nx, ny, xbar, ybar){
@@ -24,16 +15,9 @@ g <- function(m, nx, ny, xbar, ybar){
   #' Calculates g function of the expected value of W
   #' @export
   
-  N <- nx + ny
-  lambda <- nx / N
-  
-  numerator <- sqrt((lambda * N)/(1 - lambda) ) * xbar + 
-                     muw(m, lambda, N, xbar, ybar)
-  
-  denominator <- sqrt((1 - lambda) * N / lambda) * ybar - 
-                      muw(m, lambda, N, xbar, ybar)
-  
-  return((1 - lambda) / lambda * numerator / denominator)
+  numerator <- nx * xbar + muw(m = m, xbar = xbar, ybar = ybar)
+  denominator <- ny * ybar - muw(m = m, xbar = xbar, ybar = ybar)
+  return(ny / nx * numerator / denominator)
 }
 
 gp <- function(m, nx, ny, xbar, ybar){
@@ -42,123 +26,58 @@ gp <- function(m, nx, ny, xbar, ybar){
   #' Calculates derivative of the g function of the expected value of W
   #' @export
   
-  N <- nx + ny
-  lambda <- nx / N
-  
-  numerator <- sqrt((lambda * N) / (1 - lambda)) * xbar + 
-               sqrt(((1 - lambda) * N) / lambda) * ybar
-
-  denominator <- (sqrt(((1 - lambda) * N) / lambda) * ybar - 
-                  muw(m, lambda, N, xbar, ybar))^2
-  
-  return((1 - lambda) / lambda * numerator / denominator)
+  numerator <- ny * ybar + nx * xbar
+  denominator <- (ny * ybar - muw(m = m, xbar = xbar, ybar = ybar))^2
+  return(ny / nx * numerator / denominator)
 }
+
+gLin <- function(m, nx, ny, xbar, ybar){
+  #' Utitlity function for mStop
+  #'
+  #' Calculates g function of the expected value of W for T = |x - y|
+  #' @export
+  return(xbar - ybar + (1 / nx + 1 / ny) * muw(m = m, xbar = xbar, ybar = ybar))
   
+}
+
+gpLin <- function(nx, ny){
+  #' Utitlity function for mStop
+  #'
+  #' Calculates g' function of the expected value of W for T = |x - y|
+  #' @export
+  
+  return((1 / nx + 1 / ny))
+}
+
 VarW <- function(m, nx, ny, x, y){
   #' Utitlity function for mStop
   #'
   #' Calculates variance of W
   #' @export
   
-  N <- nx + ny
-  lambda <- nx / N
-  
-  # variance terms
-  EAy <- 1 / (lambda * (1 - lambda) * N) * m / ny * (1 - m / ny) *
-          sum(y^2)
-  EAx <- 1 / (lambda * (1 - lambda) * N) * m / nx * (1 - m / nx) *
-          sum(x^2)
-          
-  # get cross product terms
-  yCrossProd <- outer(y,y)
-  yCrossProdSum <- sum(yCrossProd) - sum(diag(yCrossProd))
-  
-  xCrossProd <- outer(x,x)
-  xCrossProdSum <- sum(xCrossProd) - sum(diag(xCrossProd))
-  
-  # covariance terms
-  ECy <- 1 / (lambda * (1 - lambda) * N) * (m * (ny - m)) / 
-          (ny^2 * (ny - 1)) * yCrossProdSum
-      
-  ECx <- 1 / (lambda * (1 - lambda) * N) * (m * (nx - m)) /
-          (nx^2 * (nx - 1)) * xCrossProdSum
-
-  return(EAx + EAy - ECx - ECy)
+  varX <- var(x)
+  varY <- var(y)
+  return(m * (ny - m) / ny * varY + m * (nx - m) / nx * varX)
 }
 
-mHatFun <- function(x,y){
-  #' Calculates the solution: mHat = m s.t. V'(m) = 0,
-  #' where V' is the derivative of Var(W|x,y) wrt m
-  #' @export
- 
-  nx <- length(x)
-  ny <- length(y)
-  
-  yCrossProd <- outer(y,y)
-  yCrossProdSum <- sum(yCrossProd) - sum(diag(yCrossProd))
-  
-  xCrossProd <- outer(x,x)
-  xCrossProdSum <- sum(xCrossProd) - sum(diag(xCrossProd))
-  
-  xSqSum <- sum(diag(xCrossProd)) 
-  ySqSum <- sum(diag(yCrossProd)) 
-  
-  num <- xCrossProdSum/(nx*(nx-1)) + yCrossProdSum/(ny*(ny-1)) - 
-         xSqSum/nx - ySqSum/ny
-  
-  den <- 2*(xCrossProdSum/(nx^2*(nx-1)) + yCrossProdSum/(ny^2*(ny-1)) -
-         xSqSum/nx^2 - ySqSum/ny^2)
-  
-  return(num/den)
-
-}
-
-Vp <- function(x,y,m){
-  #' Computes V'=Var(W|x,y) wrt m
-  #' @export
- 
-  nx <- length(x)
-  ny <- length(y)
-  N <- nx + ny
-  lambda <- nx / N
-  
-  constant <- lambda * (1 - lambda) * N
-  
-  yCrossProd <- outer(y,y)
-  yCrossProdSum <- sum(yCrossProd) - sum(diag(yCrossProd))
-  
-  xCrossProd <- outer(x,x)
-  xCrossProdSum <- sum(xCrossProd) - sum(diag(xCrossProd))
-  
-  xSqSum <- sum(diag(xCrossProd)) 
-  ySqSum <- sum(diag(yCrossProd)) 
-  
-  intercept <- -xCrossProdSum/(nx*(nx-1)) - yCrossProdSum/(ny*(ny-1)) + 
-         xSqSum/nx + ySqSum/ny
-  
-  slope <- 2*(xCrossProdSum/(nx^2*(nx-1)) + yCrossProdSum/(ny^2*(ny-1)) -
-         xSqSum/nx^2 - ySqSum/ny^2)
-  
-  intercept <- intercept/constant
-  slope <- slope/constant
-  
-  deriv <- intercept + m * slope
-  
-  return(list(intercept=intercept,
-         slope=slope,
-         deriv=deriv))
-}
-  
 VarR <- function(m, nx, ny, x, y, xbar, ybar){
   #' Utitlity function for mStop
   #'
   #' Calculates variance of the ratio stat R
   #' @export
   
-  gp(m, nx, ny, xbar, ybar)^2 * 
-  # muwp(lambda, N, xbar, ybar)^2 * 
-  VarW(m, nx, ny, x, y)
+  return(gp(m, nx, ny, xbar, ybar)^2 * VarW(m, nx, ny, x, y))
 }
+
+VarRLin <- function(m,nx,ny, x, y, xbar, ybar){
+  #' Utitlity function for mStop
+  #'
+  #' Calculates variance of the linear stat T = |x - y|
+  #' @export
+  
+  return(gpLin(nx, ny)^2 * VarW(m, nx, ny, x, y))
+}
+
 
 xiFunRatioMean <- function(m, nx, ny, x, y){
   #' Utitlity function for mStop
@@ -167,7 +86,7 @@ xiFunRatioMean <- function(m, nx, ny, x, y){
   #' @export
   
   N <- nx + ny
-  lambda <- nx / N
+  # lambda <- nx / N
   
   xbar <- mean(x)
   ybar <- mean(y)
@@ -217,8 +136,10 @@ mStopRatioMean <- function(x, y, B=1000, plot = FALSE){
   mStop <- m[min(which(xi > u))]
   
   if (plot) {
+    par(mar = c(5, 5, 4, 2) + 0.1)
     plot(x = m, y = xi, pch=19, ylab = expression(paste(xi, "(m)")), 
-    main= paste("Expected mStop = ", mStop, sep = ""))
+         main= bquote(paste(m["stop"]^"asym", " = ", .(mStop), sep = "")),
+         cex.axis = 1.4, cex.lab = 1.4, cex.main = 1.4)
     abline(a = u, b = 0, col="red")
   }
   
@@ -233,15 +154,14 @@ xiFunDiffMean <- function(m, nx, ny, x, y){
   #' @export
   
   N <- nx + ny
-  lambda <- nx / N
+  # lambda <- nx / N
   
   xbar <- mean(x)
   ybar <- mean(y)
   
-  Emean <- xbar - ybar + 1 / sqrt(lambda * (1 - lambda) * N) *
-    muw(m, lambda, N, xbar, ybar)
+  Emean <- gLin(m = m, nx, ny, xbar = xbar, ybar = ybar)
     
-  Evar <- 1 / (lambda * (1 - lambda) * N) * VarW(m, nx, ny, x, y)
+  Evar <-  VarRLin(m, nx, ny, x, y)
   
   t <- xbar - ybar
 
@@ -289,8 +209,10 @@ mStopDiffMean <- function(x, y, B=1000, plot = FALSE){
   mStop <- m[min(which(xi > u))]
   
   if (plot) {
+    par(mar = c(5, 5, 4, 2) + 0.1)
     plot(x = m, y = xi, pch=19, ylab = expression(paste(xi, "(m)")), 
-    main= paste("Expected mStop = ", mStop, sep = ""))
+         main= bquote(paste(m["stop"]^"asym", " = ", .(mStop), sep = "")),
+         cex.axis = 1.4, cex.lab = 1.4, cex.main = 1.4)
     abline(a = u, b = 0, col="red")
   }
   
@@ -313,5 +235,3 @@ print.mStop <- function(mStopObj){
   result <- paste("Expected mStop = ", mStopObj, sep = "")
   writeLines(result)
 }
-
-
