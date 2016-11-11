@@ -4,7 +4,7 @@
 \alias{fastPermAsym}
 \title{Fast approximation of small permutation p-values via asymptotic results}
 \usage{
-fastPermAsym(x, y, testStat = ratioMean, plot = FALSE)
+fastPermAsym(x, y, testStat = ratioMean)
 }
 \arguments{
 \item{x}{First sample}
