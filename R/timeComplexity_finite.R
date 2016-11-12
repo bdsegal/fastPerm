@@ -133,8 +133,13 @@ mStopRatioMean <- function(x, y, B=1000, plot = FALSE){
   m <- 1:min(mMax,(min(nx, ny)-1))
   xi <- xiFunRatioMean(m=m, nx, ny, x, y)
   
-  mStop <- min(m[min(which(xi > u))], min(nx, ny))
-  
+  nu <- which(xi > u)
+  if (length(nu) > 0) {
+    mStop <- m[min(nu)]
+  } else {
+    mStop <- mMax
+  }
+
   if (plot) {
     par(mar = c(5, 5, 4, 2) + 0.1)
     plot(x = m, y = xi, pch=19, ylab = expression(paste(xi, "(m)")), 
@@ -206,7 +211,12 @@ mStopDiffMean <- function(x, y, B=1000, plot = FALSE){
   
   xi <- xiFunDiffMean(m=m, nx, ny, x, y)
   
-  mStop <- min(m[min(which(xi > u))], min(nx, ny))
+  nu <- which(xi > u)
+  if (length(nu) > 0) {
+    mStop <- m[min(nu)]
+  } else {
+    mStop <- mMax
+  }
   
   if (plot) {
     par(mar = c(5, 5, 4, 2) + 0.1)
