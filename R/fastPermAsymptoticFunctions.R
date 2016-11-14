@@ -71,6 +71,8 @@ fastPermAsym <- function(x, y, testStat = ratioMean){
 
   # if nx != ny, set p-value in 0 partition to 1 and 
   # estimate p-value in partition min(nx,ny)
+  # note: for xi2, when we switch x and y, t become 1/t.
+  # Consequently, we need the lower tail for xi2
   if (nx != ny) { 
     # pNorm <- c(1, pnorm(xi, lower.tail=FALSE)) %*% pmf
     xiVec <- c(1, pnorm(xi1, lower.tail=FALSE) + pnorm(xi2, lower.tail = TRUE))
