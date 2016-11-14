@@ -65,18 +65,24 @@ fastPermAsym <- function(x, y, testStat = ratioMean){
     m <- c(1:mMax[1], (mMax[1]:0)[1:(nMax - mMax[1])])
   }
   
-  xi <- xiFun(m=m, nx, ny, x, y)
+  # xi <- xiFun(m=m, nx, ny, x, y)
+  xi1 <- xiFun(m=m, nx, ny, x, y)
+  xi2 <- xiFun(m=m, ny, nx, y, x)
 
   # if nx != ny, set p-value in 0 partition to 1 and 
   # estimate p-value in partition min(nx,ny)
   if (nx != ny) { 
-    pNorm <- c(1, pnorm(xi, lower.tail=FALSE)) %*% pmf
-    pT <- c(1, pt(xi, df=nx+ny, lower.tail=FALSE)) %*% pmf
-    
+    # pNorm <- c(1, pnorm(xi, lower.tail=FALSE)) %*% pmf
+    xiVec <- c(1, pnorm(xi1, lower.tail=FALSE) + pnorm(xi2, lower.tail = TRUE))
+    pNorm <- xiVec %*% pmf
+    pT <- xiVec %*% pmf
   # if nx==ny, set both the 0 and nx partition to 1
   } else { 
-    pNorm <- c(1, pnorm(xi[-length(xi)], lower.tail=FALSE), 1) %*% pmf
-    pT <- c(1, pt(xi[-length(xi)], df=nx+ny, lower.tail=FALSE), 1) %*% pmf
+    # pNorm <- c(1, pnorm(xi[-length(xi)], lower.tail=FALSE), 1) %*% pmf
+    xiVec <- c(1, pnorm(xi1[-length(xi1)], lower.tail=FALSE) + 
+                  pnorm(xi2[-length(xi2)], lower.tail=TRUE), 1)
+    pNorm <- xiVec %*% pmf
+    pT <- xiVec %*% pmf
   }
 
   # if (plot) {
