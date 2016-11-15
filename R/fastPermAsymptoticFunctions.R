@@ -1,4 +1,47 @@
+xiFunRatioMean1 <- function(m, nx, ny, x, y){
+  #' Utitlity function for fastPermAsym
+  #'
+  #' Calculates xi(m)
+  #' @export
+  
+  N <- nx + ny
+  # lambda <- nx / N
+  
+  xbar <- mean(x)
+  ybar <- mean(y)
+  
+  Emean <- g(m, nx, ny, xbar, ybar)
+  Evar <- VarR(m, nx, ny, x, y, xbar, ybar)
+  
+  t <- max(xbar / ybar, ybar / xbar)
 
+  xi <- (t - Emean) / sqrt(Evar)
+  
+  return(xi)
+}
+
+xiFunDiffMean1 <- function(m, nx, ny, x, y){
+  #' Utitlity function for fastPermAsym
+  #'
+  #' Calculates xi(m)
+  #' @export
+  
+  N <- nx + ny
+  # lambda <- nx / N
+  
+  xbar <- mean(x)
+  ybar <- mean(y)
+  
+  Emean <- gLin(m = m, nx, ny, xbar = xbar, ybar = ybar)
+    
+  Evar <-  VarRLin(m, nx, ny, x, y)
+  
+  t <- abs(xbar - ybar)
+
+  xi <- (t - Emean) / sqrt(Evar)
+  
+  return(xi)
+}
 
 fastPermAsym <- function(x, y, testStat = ratioMean){
 #' Fast approximation of small permutation p-values via asymptotic results
@@ -32,19 +75,19 @@ fastPermAsym <- function(x, y, testStat = ratioMean){
   }
   
   if(comparison == "ratio"){
-    xiFun <- xiFunRatioMean
+    xiFun <- xiFunRatioMean1
   } else if (comparison == "difference"){
-    xiFun <- xiFunDiffMean
+    xiFun <- xiFunDiffMean1
   } else {
     stop("testStat must be either ratioMean or diffMean")
   }
 
   # swap x and y if xbar < ybar
-  if (mean(x) < mean(y)) {
-    ytemp <- y
-    y <- x
-    x <- ytemp
-  }
+  # if (mean(x) < mean(y)) {
+  #   ytemp <- y
+  #   y <- x
+  #   x <- ytemp
+  # }
   
   nx <- length(x)
   ny <- length(y)
@@ -75,14 +118,14 @@ fastPermAsym <- function(x, y, testStat = ratioMean){
   # Consequently, we need the lower tail for xi2
   if (nx != ny) { 
     # pNorm <- c(1, pnorm(xi, lower.tail=FALSE)) %*% pmf
-    xiVec <- c(1, pnorm(xi1, lower.tail=FALSE) + pnorm(xi2, lower.tail = TRUE))
+    xiVec <- c(1, pnorm(xi1, lower.tail=FALSE) + pnorm(xi2, lower.tail = FALSE))
     pNorm <- xiVec %*% pmf
     pT <- xiVec %*% pmf
   # if nx==ny, set both the 0 and nx partition to 1
   } else { 
     # pNorm <- c(1, pnorm(xi[-length(xi)], lower.tail=FALSE), 1) %*% pmf
     xiVec <- c(1, pnorm(xi1[-length(xi1)], lower.tail=FALSE) + 
-                  pnorm(xi2[-length(xi2)], lower.tail=TRUE), 1)
+                  pnorm(xi2[-length(xi2)], lower.tail=FALSE), 1)
     pNorm <- xiVec %*% pmf
     pT <- xiVec %*% pmf
   }
