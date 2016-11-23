@@ -16,7 +16,7 @@ Difference in medians test statistic used by fastPerm.
 Note: In this version of fastPerm, median statistic may not be reliable.
 }
 \examples{
-diffMedian(x, y )
+diffMedian(x, y)
 }
 \keyword{statistic}
 \keyword{test}

@@ -89,11 +89,28 @@ diffMean <- function(x, y){
   #' @keywords test statistic
   #' @export
   #' @examples
-  #' diffMean(x, y )
+  #' diffMean(x, y)
   
   abs(mean(x) - mean(y))
 }
 attributes(diffMean) <- list(summary="mean", comparison="difference")
+
+diffMeanStudent <- function(x, y){
+  #' Utility function for fastPerm and SAMC
+  #'
+  #' Difference in means test statistic used by fastPerm
+  #' @param x First sample 
+  #' @param y Second sample
+  #' @keywords test statistic
+  #' @export
+  #' @examples
+  #' diffMeanStudent(x, y)
+  nx <- length(x)
+  ny <- length(y)
+  abs(mean(x) - mean(y)) / sqrt(var(x) / nx + var(y) / ny)
+}
+attributes(diffMeanStudent) <- list(summary="mean", comparison="studentized difference")
+
 
 diffMedian <- function(x, y){
   #' Utility function for fastPerm and SAMC
@@ -105,7 +122,7 @@ diffMedian <- function(x, y){
   #' @keywords test statistic
   #' @export
   #' @examples
-  #' diffMedian(x, y )
+  #' diffMedian(x, y)
   
   abs(median(x) - median(y))
 }
@@ -120,7 +137,7 @@ ratioMean <- function(x, y){
   #' @keywords test statistic
   #' @export
   #' @examples
-  #' ratioMean(x, y )
+  #' ratioMean(x, y)
   
   max(mean(x) / mean(y), mean(y) / mean(x))
 }
@@ -136,7 +153,7 @@ ratioMedian <- function(x, y){
   #' @keywords test statistic
   #' @export
   #' @examples
-  #' ratioMedian(x, y )
+  #' ratioMedian(x, y)
   
   max(median(x) / median(y), median(y) / median(x))
 }

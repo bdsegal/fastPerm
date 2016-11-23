@@ -15,7 +15,7 @@ ratioMean(x, y)
 Ratio of means test statistic used by fastPerm
 }
 \examples{
-ratioMean(x, y )
+ratioMean(x, y)
 }
 \keyword{statistic}
 \keyword{test}

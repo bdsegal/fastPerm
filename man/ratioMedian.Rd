@@ -16,7 +16,7 @@ Ratio of medians test statistic used by fastPerm.
 Note: In this version of fastPerm, median statistic may not be reliable.
 }
 \examples{
-ratioMedian(x, y )
+ratioMedian(x, y)
 }
 \keyword{statistic}
 \keyword{test}
