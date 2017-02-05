@@ -238,64 +238,79 @@ fastPerm <- function(x, y, testStat = ratioMean, B=1000, adjusted=FALSE){
   }
 
   mStop <- m-1
-  mLast <- max(which(countTemp>0))
-    
-  # setup partitions for prediction, to be symmetric about mMax
-  if (length(mMax)==1 & mMax[1]==nx){
-    mPred <- 1:mMax
-  } else if (length(mMax)==1 & mMax[1]<nx){
-    mPred <- c(1:mMax,((mMax-1):0)[1:(nx-mMax)])
-  } else if (length(mMax)==2 & mMax[2]==nx){
-    mPred <- c(1:mMax[1], mMax[1])
-  } else {
-    mPred <- c(1:mMax[1], (mMax[1]:0)[1:(nx - mMax[1])])
-  }
-  
-  # data frame for regression
-  count <- c(B, countTemp[1:mLast]) + 1*adjusted
-  countForReg <- data.frame(count = count, mReg = 0:mLast)
-  
-  poisFit <- glm(count ~ mReg, family = poisson, data = countForReg)
-  
-  # new data for predictions in partitions m = mPred
-  mNewData <- data.frame(mReg = mPred)
-  
-  # if nx < ny, set p-value in 0 partition to 1 and 
-  # estimate p-value in partition nx
-  if (nx < ny) { 
+  # only continue if at least 2 partitions estimated
+  if (mStop > 1) {
+    mLast <- max(which(countTemp>0))
       
-    # note: predictions with type="response" are not reliable for small values. 
-    # There is not a problem for type="link"
-    pPoisCount <- c(B + 1*adjusted,
-      exp(predict(poisFit, newdata=mNewData, type="link")))
-
-    pPred <- pPoisCount %*% pmf / (B + 1*adjusted)
-  
-  # if nx==ny, set both the 0 and nx partition to 1
-  } else { 
-  
-    mNewData <-data.frame(mReg = mNewData$mReg[-nx])
+    # setup partitions for prediction, to be symmetric about mMax
+    if (length(mMax)==1 & mMax[1]==nx){
+      mPred <- 1:mMax
+    } else if (length(mMax)==1 & mMax[1]<nx){
+      mPred <- c(1:mMax,((mMax-1):0)[1:(nx-mMax)])
+    } else if (length(mMax)==2 & mMax[2]==nx){
+      mPred <- c(1:mMax[1], mMax[1])
+    } else {
+      mPred <- c(1:mMax[1], (mMax[1]:0)[1:(nx - mMax[1])])
+    }
     
-    pPoisCount <- c(B + 1*adjusted,
-      exp(predict(poisFit, newdata = mNewData, type="link")),
-      B + 1*adjusted)
+    # data frame for regression
+    count <- c(B, countTemp[1:mLast]) + 1*adjusted
+    countForReg <- data.frame(count = count, mReg = 0:mLast)
     
-    pPred <- pPoisCount %*% pmf / (B + 1*adjusted)
-
-  }
-  
-  glmSummary <- summary(poisFit)
-
-  ret <- list(pPred = pPred,
-    mStop = mStop,
-    deviance = glmSummary$deviance,
-    aic = glmSummary$aic,
-    df.residual = glmSummary$df.residual,
-    B = B,
-    t0 = t0,
-    comparison = attributes(testStat)$comparison,
-    summary = attributes(testStat)$summary)
+    poisFit <- glm(count ~ mReg, family = poisson, data = countForReg)
+    
+    # new data for predictions in partitions m = mPred
+    mNewData <- data.frame(mReg = mPred)
+    
+    # if nx < ny, set p-value in 0 partition to 1 and 
+    # estimate p-value in partition nx
+    if (nx < ny) { 
         
+      # note: predictions with type="response" are not reliable for small values. 
+      # There is not a problem for type="link"
+      pPoisCount <- c(B + 1*adjusted,
+        exp(predict(poisFit, newdata=mNewData, type="link")))
+
+      pPred <- pPoisCount %*% pmf / (B + 1*adjusted)
+    
+    # if nx==ny, set both the 0 and nx partition to 1
+    } else { 
+    
+      mNewData <-data.frame(mReg = mNewData$mReg[-nx])
+      
+      pPoisCount <- c(B + 1*adjusted,
+        exp(predict(poisFit, newdata = mNewData, type="link")),
+        B + 1*adjusted)
+      
+      pPred <- pPoisCount %*% pmf / (B + 1*adjusted)
+
+    }
+    
+    glmSummary <- summary(poisFit)
+
+    ret <- list(pPred = pPred,
+      mStop = mStop,
+      deviance = glmSummary$deviance,
+      aic = glmSummary$aic,
+      df.residual = glmSummary$df.residual,
+      B = B,
+      t0 = t0,
+      comparison = attributes(testStat)$comparison,
+      summary = attributes(testStat)$summary)
+  } else {
+
+    warning(paste("mStop = ", mStop, ": not enough partitions estimated (p-value too small)\nTry increasing B", sep = ""))
+
+    ret <- list(pPred = NA,
+      mStop = mStop,
+      deviance = NA,
+      aic = NA,
+      df.residual = NA,
+      B = B,
+      t0 = t0,
+      comparison = attributes(testStat)$comparison,
+      summary = attributes(testStat)$summary)
+  }
   class(ret) <- "fastPerm"
   
   return(ret)
