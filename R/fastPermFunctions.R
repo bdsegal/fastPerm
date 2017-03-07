@@ -2,55 +2,6 @@
 # proposed algorithm
 
 # pmf of partitions ---------------------------------------
-
-Pi <- function(nx, ny){
-  #' Exact pmf of partitions
-  #'
-  #' This function calculates the exact probability mass function
-  #' of the partitions.
-  #' Typically, this function is called from fastPerm.
-  #' @param nx Size of first sample
-  #' @param ny Size of second sample
-  #' @keywords partition pmf
-  #' @export
-  #' @examples
-  #' Pi(nx, ny)
-  
-  out <- rep(NA, min(nx, ny) + 1)
-  names(out) <- 0:min(nx, ny)
-  
-  for (m in 0:min(nx, ny)){
-    out[m + 1] <- choose(nx, m) * choose(ny, m) / choose(nx + ny, nx)
-  }
-  
-  return(out)
-}
-
-PiLgammaNxSmaller <- function(nx, ny){
-  #' Exact pmf of partitions with the log gamma function
-  #' Assuming nx <= ny
-  #'
-  #' This function calculates the exact probability mass function
-  #' of the partitions using the lgamma function.
-  #' Typically, this function is called from fastPerm.
-  #' @param nx Size of first sample
-  #' @param ny Size of second sample
-  #' @keywords partition pmf
-  #' @export
-  #' @examples
-  #' PiLgamma(nx, ny)
-  
-  out <- rep(NA, min(nx, ny) + 1)
-  names(out) <- 0:min(nx, ny)
-  
-  for (m in 0:min(nx, ny)){
-    out[m + 1] <- exp(2*(lgamma(nx + 1) + lgamma(ny + 1) - lgamma(m + 1)) - 
-      lgamma(nx + ny + 1) - lgamma(nx - m + 1) - lgamma(ny - m + 1))
-  }
-  
-  return(out)
-}
-
 PiLgamma <- function(nx, ny){
   #' Exact pmf of partitions with the log gamma function
   #'
