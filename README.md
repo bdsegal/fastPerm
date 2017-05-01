@@ -10,7 +10,7 @@ This package also implements stochastic approximation Monte Carlo (Yu et al., 20
 
 ```{r}
 # install.packages("devtools")
-# library("devtools")
+library("devtools")
 install_github("bdsegal/fastPerm")
 ```
 
