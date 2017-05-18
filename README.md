@@ -1,8 +1,6 @@
 # fastPerm
 
-This is an R package for quickly approximating small p-values (e.g. p < 10<sup>-6</sup>) in two-sample permutation tests, in which the test statistic is the difference or ratio of the means. It does this by partitioning the permutations in such a way that there is a trend in the p-values across the partitions. It then calculates p-values in partitions that are cheap to evaluate, predicts p-values in partitions that are expensive to evaluate, and takes a weighted sum to get an overall p-value. A paper describing this method in detail is currently under review.
-
-fastPerm currently supports ratios and differences of the means (`testStat = ratioMean` and `testStat = diffMean`, respectively).
+This is an R package for quickly approximating small p-values (e.g. p < 10<sup>-6</sup>) for the difference and ratio of means in two-sample tests as described by Segal et al. (2017).
 
 This package also implements stochastic approximation Monte Carlo (Yu et al., 2011) in the `SAMC` function.
 
@@ -38,6 +36,7 @@ fastPerm(x, y, testStat = diffMean)
 
 ## References
 
-Kai Yu, Faming Liang, Julia Ciampa, and Nilanjan Chatterjee. Efficient p-value evaluation for resampling-based tests. Biostatistics, pages 1-11, 2011.
+Segal, B. D., Braun, T., Elliott, M. R. and Jiang, H. (2017), Fast approximation of small p-values in permutation tests by partitioning the permutations. Biometrics doi:[10.1111/biom.12731](http://onlinelibrary.wiley.com/doi/10.1111/biom.12731/full)
 
-Brian Segal, Thomas Braun, Michael Elliott, and Hui Jiang. Fast approximation of small p-values in permutation tests by partitioning the permutations. Submitted. Working draft available online at [https://arxiv.org/abs/1605.03992](https://arxiv.org/abs/1605.03992).
+Yu, K., Liang, F., Ciampa, J., and Chatterjee, N. (2011). Efficient p-value evaluation for
+resampling-based tests. Biostatistics 12, 582–593.
