@@ -36,7 +36,7 @@ fastPerm(x, y, testStat = diffMean)
 
 ## References
 
-Segal, B. D., Braun, T., Elliott, M. R. and Jiang, H. (2017), Fast approximation of small p-values in permutation tests by partitioning the permutations. Biometrics doi:[10.1111/biom.12731](http://onlinelibrary.wiley.com/doi/10.1111/biom.12731/full)
+Segal, B. D., Braun, T., Elliott, M. R. and Jiang, H. (2017). Fast approximation of small p-values in permutation tests by partitioning the permutations. Biometrics doi:[10.1111/biom.12731](http://onlinelibrary.wiley.com/doi/10.1111/biom.12731/full)
 
 Yu, K., Liang, F., Ciampa, J., and Chatterjee, N. (2011). Efficient p-value evaluation for
 resampling-based tests. Biostatistics 12, 582–593.
